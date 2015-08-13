@@ -19,7 +19,7 @@ namespace SharpBTC
                     tbOutput.Text += "This is a valid Bitcoin Address. \r\n";
                 }
             }
-            catch (Exception excp) {
+            catch (Exception) {
                 tbOutput.Text += "This is NOT a valid Bitcoin Address. \r\n";
             }
 
@@ -29,7 +29,7 @@ namespace SharpBTC
                     tbOutput.Text += "This is a valid Testnet Address. \r\n";
                 }
             }             
-            catch (Exception excp) {
+            catch (Exception) {
                 tbOutput.Text += "This is NOT a valid Testnet Address. \r\n";
             }
 
@@ -38,7 +38,7 @@ namespace SharpBTC
                 {
                     tbOutput.Text += "This is a valid Bitcoin Multisig Address. \r\n";
                 }
-            } catch (Exception excp) {
+            } catch (Exception) {
                 tbOutput.Text += "This is NOT a valid Bitcoin Multisig Address. \r\n";
             }
 
@@ -48,7 +48,7 @@ namespace SharpBTC
                     tbOutput.Text += "This is a valid Testnet Multisig Address. \r\n";
                 }
             }
-            catch (Exception excp) {
+            catch (Exception) {
                 tbOutput.Text += "This is NOT a valid Testnet Multisig Address. \r\n";
             }
            
