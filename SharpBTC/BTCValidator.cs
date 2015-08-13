@@ -104,7 +104,7 @@ namespace SharpBTC
 
             if (p != expectedType)
             {
-                throw new Exception("Wrong Address Type!");
+                throw new Exception("Wrong Address Type. Not of type "+Enum.GetName(typeof(Prefix), expectedType)+"!");
             }
 
             if (!decoded.SubArray(21, 4).SequenceEqual(d2.SubArray(0, 4))) throw new Exception("bad digest:" + decoded.ToString());
