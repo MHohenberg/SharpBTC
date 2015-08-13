@@ -86,6 +86,12 @@ namespace SharpBTC
         const string Alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
         const int Size = 25;
 
+        /// <summary>
+        /// Validates that the address is an valid example of Prefix
+        /// </summary>
+        /// <param name="address"></param>
+        /// <param name="expectedType"></param>
+        /// <returns></returns>
         public static bool ValidateAddress(string address, Prefix expectedType)
         {
             if (address.Length < 26 || address.Length > 35) throw new Exception("wrong length");
@@ -104,21 +110,41 @@ namespace SharpBTC
             return true;
         }
 
+        /// <summary>
+        /// Wrapper function vor ValidateAddress for Bitcoin addresses
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public static bool ValidateBitcoinAddress(string address)
         {
             return ValidateAddress(address, Prefix.Pubkey_hash);
         }
 
+        /// <summary>
+        /// Wrapper function vor ValidateAddress for Multisig addresses
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public static bool ValidateBitcoinMultisigAddress(string address)
         {
             return ValidateAddress(address, Prefix.Script_hash);
         }
-        
+
+        /// <summary>
+        /// Wrapper function vor ValidateAddress for Testnet addresses
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public static bool ValidateTestnetAddress(string address)
         {
             return ValidateAddress(address, Prefix.Testnet_pubkey_hash);
         }
 
+        /// <summary>
+        /// Wrapper function vor ValidateAddress for Testnet Multisig addresses
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public static bool ValidateTestnetMultisigAddress(string address)
         {
             return ValidateAddress(address, Prefix.Testnet_script_hash);
