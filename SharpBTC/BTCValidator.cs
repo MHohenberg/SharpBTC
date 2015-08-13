@@ -17,6 +17,7 @@
  **/
  
 using System;
+using System.Numerics;
 using System.Linq;
 using System.Security.Cryptography;
 using NUnit.Framework;
@@ -48,7 +49,7 @@ namespace SharpBTC
             Assert.IsTrue(ValidateBitcoinAddress("1AGNa15ZQXAZUgFiqJ2i7Z2DPU2J6hW62i")); // VALID
             Assert.Throws<Exception>(() => ValidateBitcoinAddress("1AGNa15ZQXAZUgFiqJ2i7Z2DPU2J6hW62X")); // checksum changed, original data
             Assert.Throws<Exception>(() => ValidateBitcoinAddress("1ANNa15ZQXAZUgFiqJ2i7Z2DPU2J6hW62i")); // data changed, original checksum
-            Assert.Throws<Exception>(() => ValidateBitcoinAddress("1A Na15ZQXAZUgFiqJ2i7Z2DPU2J6hW62i")); // invalid chars
+            Assert.Throws<FormatException>(() => ValidateBitcoinAddress("1A Na15ZQXAZUgFiqJ2i7Z2DPU2J6hW62i")); // invalid chars
             Assert.Throws<Exception>(() => ValidateBitcoinAddress("BZbvjr")); // checksum is fine, address too short
             Assert.Throws<Exception>(() => ValidateBitcoinAddress("3EktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX")); // Multisig address
             Assert.Throws<Exception>(() => ValidateBitcoinAddress("mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn")); // Testnet address
@@ -57,7 +58,7 @@ namespace SharpBTC
             Assert.IsTrue(ValidateBitcoinMultisigAddress("3EktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX")); // VALID
             Assert.Throws<Exception>(() => ValidateBitcoinMultisigAddress("3EktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQA")); // checksum changed, original data
             Assert.Throws<Exception>(() => ValidateBitcoinMultisigAddress("3EktnHQD7RiAE4uzMj2ZifT9YgRrkSgzQX")); // data changed, original checksum
-            Assert.Throws<Exception>(() => ValidateBitcoinMultisigAddress("3E ktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX")); // invalid chars
+            Assert.Throws<FormatException>(() => ValidateBitcoinMultisigAddress("3E ktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX")); // invalid chars
             Assert.Throws<Exception>(() => ValidateBitcoinMultisigAddress("BZbvjr")); // checksum is fine, address too short
             Assert.Throws<Exception>(() => ValidateBitcoinMultisigAddress("1Q1pE5vPGEEMqRcVRMbtBK842Y6Pzo6nK9")); // Bitcoin address
             Assert.Throws<Exception>(() => ValidateBitcoinMultisigAddress("mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn")); // Testnet address
@@ -66,7 +67,7 @@ namespace SharpBTC
             Assert.IsTrue(ValidateTestnetAddress("mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfn")); // VALID
             Assert.Throws<Exception>(() => ValidateTestnetAddress("mipcBbFg9gMiCh81Kj8tqqdgoZub1ZJRfG")); // checksum changed, original data
             Assert.Throws<Exception>(() => ValidateTestnetAddress("mipcBbFg9gMiCh82Kj8tqqdgoZub1ZJRfn")); // data changed, original checksum
-            Assert.Throws<Exception>(() => ValidateTestnetAddress("mipcBbFg9gMiCh81 Kj8tqqdgoZub1ZJRfn")); // invalid chars
+            Assert.Throws<FormatException>(() => ValidateTestnetAddress("mipcBbFg9gMiCh81 Kj8tqqdgoZub1ZJRfn")); // invalid chars
             Assert.Throws<Exception>(() => ValidateTestnetAddress("BZbvjr")); // checksum is fine, address too short
             Assert.Throws<Exception>(() => ValidateTestnetAddress("3EktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX")); // Multisig address
             Assert.Throws<Exception>(() => ValidateTestnetAddress("1Q1pE5vPGEEMqRcVRMbtBK842Y6Pzo6nK9")); // Bitcoin address
@@ -75,7 +76,7 @@ namespace SharpBTC
             Assert.IsTrue(ValidateTestnetMultisigAddress("2MzQwSSnBHWHqSAqtTVQ6v47XtaisrJa1Vc")); // VALID
             Assert.Throws<Exception>(() => ValidateTestnetMultisigAddress("2MzQwSSnBHWHqSAqtTVQ6v47XtaisrJa1VA")); // checksum changed, original data
             Assert.Throws<Exception>(() => ValidateTestnetMultisigAddress("2MzQwSSnbHWHqSAqtTVQ6v47XtaisrJa1Vc")); // data changed, original checksum
-            Assert.Throws<Exception>(() => ValidateTestnetMultisigAddress("2M zQwSSnBHWHqSAqtTVQ6v47XtaisrJa1Vc")); // invalid chars
+            Assert.Throws<FormatException>(() => ValidateTestnetMultisigAddress("2M zQwSSBHWHqSAqtTVQ6v47XtaisrJa1Vc")); // invalid chars
             Assert.Throws<Exception>(() => ValidateTestnetMultisigAddress("BZbvjr")); // checksum is fine, address too short
             Assert.Throws<Exception>(() => ValidateTestnetMultisigAddress("3EktnHQD7RiAE6uzMj2ZifT9YgRrkSgzQX")); // Multisig address
             Assert.Throws<Exception>(() => ValidateTestnetMultisigAddress("1Q1pE5vPGEEMqRcVRMbtBK842Y6Pzo6nK9")); // Bitcoin address
@@ -83,11 +84,11 @@ namespace SharpBTC
             
         }
 
-        const string Alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+        const string Digits = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
         const int Size = 25;
 
         /// <summary>
-        /// Validates that the address is an valid example of Prefix
+        /// Validates that the address is an valid example of Prefix expectedType
         /// </summary>
         /// <param name="address"></param>
         /// <param name="expectedType"></param>
@@ -103,10 +104,10 @@ namespace SharpBTC
 
             if (p != expectedType)
             {
-                throw new Exception("Not a Bitcoin address!");
+                throw new Exception("Wrong Address Type!");
             }
 
-            if (!decoded.SubArray(21, 4).SequenceEqual(d2.SubArray(0, 4))) throw new Exception("bad digest");
+            if (!decoded.SubArray(21, 4).SequenceEqual(d2.SubArray(0, 4))) throw new Exception("bad digest:" + decoded.ToString());
             return true;
         }
 
@@ -177,21 +178,33 @@ namespace SharpBTC
 
         private static byte[] DecodeBase58(string input)
         {
-            var output = new byte[Size];
-            foreach (var t in input)
+            // Decode Base58 string to BigInteger 
+            BigInteger intData = 0;
+            for (int i = 0; i < input.Length; i++)
             {
-                var currentCharacter = Alphabet.IndexOf(t);
-                if (currentCharacter == -1) throw new Exception("invalid character found");
-                var j = Size;
-                while (--j > 0)
-                {
-                    currentCharacter += 58 * output[j];
-                    output[j] = (byte)(currentCharacter % 256);
-                    currentCharacter /= 256;
-                }
-                if (currentCharacter != 0) throw new Exception("address too long");
+                int digit = Digits.IndexOf(input[i]); //Slow
+                if (digit < 0)
+                    throw new FormatException(string.Format("Invalid Base58 character `{0}` at position {1}", input[i], i));
+                intData = intData * 58 + digit;
             }
-            return output;
+
+            // Encode BigInteger to byte[]
+            // Leading zero bytes get encoded as leading `1` characters
+            int leadingZeroCount = input.TakeWhile(c => c == '1').Count();
+            var leadingZeros = Enumerable.Repeat((byte)0, leadingZeroCount);
+            var bytesWithoutLeadingZeros =
+                intData.ToByteArray()
+                .Reverse()// to big endian
+                .SkipWhile(b => b == 0);//strip sign byte
+            var result = leadingZeros.Concat(bytesWithoutLeadingZeros).ToArray();
+            return result;
+        }
+
+
+        public static string ByteArrayToHexString(byte[] ba)
+        {
+            string hex = BitConverter.ToString(ba);
+            return hex.Replace("-", "");
         }
 
         private static byte[] Hash(byte[] bytes)
